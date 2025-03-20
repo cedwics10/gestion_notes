@@ -1,0 +1,20 @@
+:: 1️⃣ Vérifier si PostgreSQL est déjà enregistré comme un service Windows
+sc query PostgreSQL
+
+:: 2️⃣ Si le service existe, essayer de le démarrer
+net start PostgreSQL
+
+:: 3️⃣ Activer le démarrage automatique de PostgreSQL au démarrage de Windows
+sc config PostgreSQL start= auto
+
+:: 4️⃣ Vérifier si PostgreSQL écoute sur le port 5432 (doit afficher un processus écoutant sur ce port)
+netstat -ano | findstr :5432
+
+:: 5️⃣ (Si PostgreSQL ne démarre pas) Supprimer et recréer le service
+sc delete PostgreSQL
+"C:\Program Files\PostgreSQL\17\bin\pg_ctl.exe" register -N "PostgreSQL" -D "C:\Program Files\PostgreSQL\17\data"
+sc config PostgreSQL start= auto
+net start PostgreSQL
+
+"C:\Program Files\PostgreSQL\17\bin\pg_ctl.exe" register -N "PostgreSQL" -D "C:\Program Files\PostgreSQL\17\data" -U postgres
+
